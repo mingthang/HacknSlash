@@ -3,7 +3,7 @@ This branch contains the version submitted by the deadline for the assigned inte
 
 While the core systems are implemented, some features remain incomplete due to overlapping university commitments (exam and report weeks). I’ve prioritized clarity and structure, and I hope this version reflects the progress and potential of the project so far.
 
-For continued updates and feature improvements, please refer to the update branch.
+For continued updates and feature improvements, please refer to the **_update_** branch.
 
 ## 📂 Branches
 

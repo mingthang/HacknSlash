@@ -21,6 +21,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LockOnTarget();
+
+	UFUNCTION(BlueprintCallable)
+	void NextNearestTarget();
 	
 	void Reset();
 
@@ -39,7 +42,7 @@ protected:
 	void GetNearestTarget();
 	
 private:
-	UPROPERTY() AActor* TargetActor;
+	UPROPERTY() AActor* TargetActor = nullptr;
 	UPROPERTY() TArray<AActor*> TargetActors;
 	bool bIsTarget = false;
 	

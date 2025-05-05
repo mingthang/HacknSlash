@@ -257,6 +257,7 @@ void UHitReactionComponent::RagdollEvent()
 void UHitReactionComponent::OnDeath()
 {
 	bIsAlive = false;
+	OnDeathEvent.Broadcast();
 }
 
 void UHitReactionComponent::RemoveStamina(const float Amount)

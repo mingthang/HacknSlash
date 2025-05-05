@@ -405,6 +405,13 @@ void UComboBufferComponent::StartAirLaunchAttack()
 {
 	if (APlayerCharacter* Character = Cast<APlayerCharacter>(GetOwner()))
 	{
+
+		UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+		if (!IsValid(AnimInstance)) return;
+
+		if (AnimInstance->Montage_IsPlaying(CurrentWeapon->WeaponProfile.ActionsData.AirLaunchAttack))
+			return;
+		
 		if (Character->GetCurrentState() == EPlayerState::None && !IsInAir())
 		{
 			// Hitbox notify montage start time

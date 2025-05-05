@@ -94,6 +94,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Completed, this, &APlayerCharacter::OnLightAttackReleased);
 		
 		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Started, this, &APlayerCharacter::AirLaunchAttack);
+
+		// Target
+		EnhancedInputComponent->BindAction(LockTargetAction, ETriggerEvent::Started, this, &APlayerCharacter::LockTarget);
+		EnhancedInputComponent->BindAction(SwitchTargetAction, ETriggerEvent::Started, this, &APlayerCharacter::SwitchTarget);
 	}
 }
 
@@ -129,8 +133,10 @@ void APlayerCharacter::OnLightAttackPressed()
 {
 	if (ComboBufferComponent)
 	{
-		if (TargetSystem&& !TargetSystem->GetIsTarget())
+		if (TargetSystem && !TargetSystem->GetIsTarget())
+		{
 			TargetSystem->LockOnTarget();
+		}
 		ComboBufferComponent->OnComboButtonDown(EComboInput::LightAttack);
 	}
 }
@@ -147,7 +153,7 @@ void APlayerCharacter::AirLaunchAttack()
 {
 	if (ComboBufferComponent)
 	{
-		if (TargetSystem&& !TargetSystem->GetIsTarget())
+		if (TargetSystem && !TargetSystem->GetIsTarget())
 			TargetSystem->LockOnTarget();
 		ComboBufferComponent->StartAirLaunchAttack();
 		//ComboBufferComponent->OnComboButtonDown(EComboInput::AirLaunch);
@@ -160,4 +166,20 @@ void APlayerCharacter::SetCurrentState(EPlayerState NewState)
 		return;
 		
 	CurrentState = NewState;
+}
+
+void APlayerCharacter::LockTarget()
+{
+	if (TargetSystem && !TargetSystem->GetIsTarget())
+	{
+		TargetSystem->LockOnTarget();
+	}
+}
+
+void APlayerCharacter::SwitchTarget()
+{
+	if (TargetSystem)
+	{
+		TargetSystem->NextNearestTarget();
+	}
 }

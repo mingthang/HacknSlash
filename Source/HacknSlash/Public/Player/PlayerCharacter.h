@@ -36,6 +36,9 @@ protected:
 	void OnLightAttackPressed();
 	void OnLightAttackReleased();
 	void AirLaunchAttack();
+	// Target
+	void LockTarget();
+	void SwitchTarget();
 
 public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoomComponent() const { return CameraBoom; }
@@ -80,6 +83,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HeavyAttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* LockTargetAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SwitchTargetAction;
+	
 	// Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
     UComboBufferComponent* ComboBufferComponent;

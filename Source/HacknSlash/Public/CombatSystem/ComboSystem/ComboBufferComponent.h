@@ -91,6 +91,7 @@ private:
     int32 CurrentComboIndex = 0;
     EComboTag CurrentComboTag = EComboTag::Ground;
     bool bComboInProgress = false;
+	bool bIsAirLaunching = false;
 	
 	// Input Timing
 	float Delta = 0.0f;

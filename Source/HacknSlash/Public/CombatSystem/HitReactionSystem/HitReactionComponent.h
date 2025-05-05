@@ -5,6 +5,8 @@
 #include "HitReactionInterface.h"
 #include "HitReactionComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeathSignature);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HACKNSLASH_API UHitReactionComponent : public UActorComponent, public IHitReactionInterface
 {
@@ -24,6 +26,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void OnHitReaction(const float Damage, AActor* DamageCauser, const FHitResult& HitInfo, FName DamagedActorTag);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDeathSignature OnDeathEvent;
 
 	UFUNCTION(BlueprintCallable)
 	void LaunchCharacter(float LaunchVelocityZ);

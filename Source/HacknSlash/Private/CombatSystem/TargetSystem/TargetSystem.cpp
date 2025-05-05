@@ -4,6 +4,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "WorldPartition/ContentBundle/ContentBundleLog.h"
+#include "CombatSystem/TargetSystem/TargetSystemInterface.h"
+#include "Components/WidgetComponent.h"
 
 UTargetSystem::UTargetSystem()
 {
@@ -63,7 +65,6 @@ void UTargetSystem::LockOnTarget()
 		bIsTarget = true;
 	}
 
-	//TargetActors.RemoveAll([](AActor* Actor) { return !IsValid(Actor); });
 	GetNearestTarget();	
 }
 
@@ -100,6 +101,15 @@ void UTargetSystem::GetNearestTarget()
 	if (!bIsTarget)
 		return;
 
+	if (IsValid(TargetActor) && TargetActor->Implements<UTargetSystemInterface>())
+	{
+		UWidgetComponent* TargetWidget = ITargetSystemInterface::Execute_GetWidgetTargetComponent(TargetActor);
+		if (IsValid(TargetWidget))
+		{
+			TargetWidget->SetHiddenInGame(true);
+		}
+	}
+
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner))
 		return;
@@ -129,15 +139,82 @@ void UTargetSystem::GetNearestTarget()
     }
 
 	TargetActor = NewTargetActor;
+
+	if (IsValid(TargetActor))
+		return;
+
+	if (TargetActor->Implements<UTargetSystemInterface>())
+	{
+		UWidgetComponent* TargetWidget = ITargetSystemInterface::Execute_GetWidgetTargetComponent(TargetActor);
+		if (IsValid(TargetWidget))
+		{
+			TargetWidget->SetHiddenInGame(false);
+		}
+	}
+
+	// TODO: Tracking on target 
 	if (IsValid(TargetActor))
 	{
 		LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(OwnerLocation, TargetActor->GetActorLocation());
 	}
 }
 
+void UTargetSystem::NextNearestTarget()
+{
+	if (!bIsTarget)
+		return;
+	TargetActors.Empty();
+
+	AActor* Owner = GetOwner();
+	if (!IsValid(Owner))
+		return;
+	
+	TArray<AActor*> IgnoreActors;
+	IgnoreActors.Add(Owner);
+	IgnoreActors.Add(TargetActor);
+
+	TArray<FHitResult> OutHits;
+	bool bIsHitTarget = FindTargetsInRadius(FindTargetRadius, IgnoreActors, ECC_Pawn, OutHits);
+	
+	if (!bIsHitTarget)
+	{
+		if (bIsTarget)
+			Reset();
+	}
+
+	for (const FHitResult& Hit: OutHits)
+	{
+		if (!IsValid(Hit.GetActor()))
+			continue;
+		
+		UHitReactionComponent* HitReaction = Hit.GetActor()->FindComponentByClass<UHitReactionComponent>();
+		if (!IsValid(HitReaction))
+			continue;
+
+		if (!HitReaction->IsAlive() || !Hit.GetActor()->ActorHasTag(FName("Enemy")))
+			continue;
+
+		TargetActors.AddUnique(Hit.GetActor());
+		bIsTarget = true;
+	}
+
+	GetNearestTarget();	
+}
+
+
 void UTargetSystem::Reset()
 {
 	bIsTarget = false;
+
+	if (IsValid(TargetActor) && TargetActor->Implements<UTargetSystemInterface>())
+	{
+		UWidgetComponent* TargetWidget = ITargetSystemInterface::Execute_GetWidgetTargetComponent(TargetActor);
+		if (IsValid(TargetWidget))
+		{
+			TargetWidget->SetHiddenInGame(true);
+		}
+	}
+	
 	TargetActor	= nullptr;
 	TargetActors.Empty();
 }

@@ -39,6 +39,11 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool IsAlive() const { return bIsAlive; }
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsHit() const { return bIsHit; }
+	UFUNCTION(BlueprintCallable)
+	void SetIsHit(bool IsHit);
 
 	// HIT REACTIONS MONTAGES
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hit Reaction Anim Montages")
@@ -98,5 +103,6 @@ private:
 	FHitResult HitInfo;
 
 	bool bIsAlive = true;
+	bool bIsHit = false;
 	UPROPERTY() AActor* DamageCauser = nullptr;
 };

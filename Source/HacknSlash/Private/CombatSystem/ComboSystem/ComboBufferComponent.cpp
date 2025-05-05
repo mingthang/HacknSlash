@@ -176,7 +176,10 @@ void UComboBufferComponent::StartNewComboChain(EComboInput Input)
 {
 	bComboInProgress  = true;
 	CurrentComboIndex = 0;
-	CurrentComboTag   = GetCurrentComboTag();
+	if (IsInAir())
+		CurrentComboTag = EComboTag::Air;
+	else
+		CurrentComboTag = EComboTag::Ground;
 	QueueChainedCombo(Input);
 }
 
@@ -192,7 +195,7 @@ void UComboBufferComponent::QueueChainedCombo(EComboInput Input)
 	int32 SelectedIdx = -1;
 	for (int32 ChainedCombosIdx  = 0; ChainedCombosIdx < NumChainedCombos; ++ChainedCombosIdx)
 	{
-		EComboTag ChainedComboTag = CurrentWeapon->WeaponProfile.ComboSet.ChainedCombos[0].ComboTag;
+		EComboTag ChainedComboTag = CurrentWeapon->WeaponProfile.ComboSet.ChainedCombos[ChainedCombosIdx].ComboTag;
 		if (ChainedComboTag == CurrentComboTag)
 		{
 			SelectedIdx = ChainedCombosIdx;
@@ -201,7 +204,10 @@ void UComboBufferComponent::QueueChainedCombo(EComboInput Input)
 	}
 
 	if (SelectedIdx == -1)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("⛔ Chained index %d out of range."), SelectedIdx);
 		return;
+	}
 	
 	const auto& Steps = CurrentWeapon->WeaponProfile.ComboSet.ChainedCombos[SelectedIdx].ChainedCombo.Steps;
 	if (CurrentComboIndex >= Steps.Num())
@@ -401,6 +407,17 @@ void UComboBufferComponent::StartAirLaunchAttack()
 	{
 		if (Character->GetCurrentState() == EPlayerState::None && !IsInAir())
 		{
+			// Hitbox notify montage start time
+			for (const FAnimNotifyEvent& NotifyEvent : CurrentWeapon->WeaponProfile.ActionsData.AirLaunchAttack->Notifies)
+			{
+				if (NotifyEvent.NotifyStateClass && NotifyEvent.NotifyStateClass->GetFName() == TEXT("BP_ANS_Melee_Hitbox_C_0"))
+				{
+					if (UHitboxComponent* HitboxComponent= GetOwner()->FindComponentByClass<UHitboxComponent>())
+					{
+						HitboxComponent->SetMontageTime(NotifyEvent.GetTime());
+					}
+				}
+			}
 			PlayAnimMontage(CurrentWeapon->WeaponProfile.ActionsData.AirLaunchAttack, 1.0f);
 		}
 	}

@@ -93,7 +93,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Started, this, &APlayerCharacter::OnLightAttackPressed);
 		EnhancedInputComponent->BindAction(LightAttackAction, ETriggerEvent::Completed, this, &APlayerCharacter::OnLightAttackReleased);
 		
-		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Triggered, this, &APlayerCharacter::AirLaunchAttack);
+		EnhancedInputComponent->BindAction(HeavyAttackAction, ETriggerEvent::Started, this, &APlayerCharacter::AirLaunchAttack);
 	}
 }
 
@@ -150,6 +150,7 @@ void APlayerCharacter::AirLaunchAttack()
 		if (TargetSystem&& !TargetSystem->GetIsTarget())
 			TargetSystem->LockOnTarget();
 		ComboBufferComponent->StartAirLaunchAttack();
+		//ComboBufferComponent->OnComboButtonDown(EComboInput::AirLaunch);
 	}
 }
 

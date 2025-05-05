@@ -25,7 +25,7 @@ public:
 	void Reset();
 
 	UFUNCTION(BlueprintCallable)
-	void ApproachToTarget(float RequiredDistanceToFaceTarget, float RequiredDistanceToMoveToTarget, bool bSwitchToNearestEnemy, float InterpSpeed, bool bMoveToTarget);
+	void ApproachToTarget(float RequiredDistanceToFaceTarget, float RequiredDistanceToMoveToTarget, bool bSwitchToNearestEnemy, float ApproachTargetOffset, float InterpSpeed, bool bMoveToTarget);
 
 	UFUNCTION(BlueprintCallable)
 	AActor* GetLockedOnTarget() const { return LockedOnTarget; }
@@ -45,9 +45,6 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = TargetSystem, meta = (AllowPrivateAccess = "true"))
 	float FindTargetRadius = 500.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = TargetSystem, meta = (AllowPrivateAccess = "true"))
-	float ApproachTargetOffset = 200.0f;
 
 	UPROPERTY() AActor* LockedOnTarget;
 

@@ -57,12 +57,13 @@ void UHitboxComponent::BeginAttackTrace_Implementation()
 	//MontageTime = AnimInstance->Montage_GetPosition(CurrentMontage);
 }
 
-void UHitboxComponent::UpdateMeleeAttackTrace_Implementation(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, float DeltaTime)
+void UHitboxComponent::UpdateMeleeAttackTrace_Implementation(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, FVector InTraceOffset, float DeltaTime)
 {
 	AccumulatedTime += DeltaTime;
 
 	while (AccumulatedTime >= FixedTimeStep)
 	{
+		TraceOffset = InTraceOffset;
 		HandleUpdateMeleeAttackTrace(InWeaponState, InTraceType, InDamageSockets, InTraceSize);
 		AccumulatedTime -= FixedTimeStep;
 	}
@@ -97,7 +98,7 @@ void UHitboxComponent::HandleUpdateMeleeAttackTrace(EWeaponState InWeaponState, 
 		{
 			//const FVector CurrentSocketLocation = SelectedMesh->GetSocketLocation(DamageSockets[i]);
 			USkeletalMeshComponent* PlayerSK = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
-			FTransform SocketTransform =GetWeaponSocketTransform(CurrentMontage, MontageTime, DamageSockets[i], PlayerSK);
+			FTransform SocketTransform = GetWeaponSocketTransform(CurrentMontage, MontageTime, DamageSockets[i], PlayerSK);
 			FVector CurrentSocketLocation = SocketTransform.GetLocation();
 			
 			FVector Start = PreviousStartLocations.IsValidIndex(i) ? PreviousStartLocations[i] : CurrentSocketLocation;
@@ -231,7 +232,8 @@ FTransform UHitboxComponent::GetWeaponSocketTransform(UAnimMontage* InMontage, f
 				BoneIndex = ParentBoneIndex;
 			}
 			//BoneWorldTransform.SetLocation(BoneWorldTransform.GetLocation() + InSkeletalMeshComp->GetComponentTransform().GetLocation());
-			BoneWorldTransform =  BoneWorldTransform * InSkeletalMeshComp->GetComponentTransform();
+			//BoneWorldTransform =  BoneWorldTransform * InSkeletalMeshComp->GetComponentTransform();
+			BoneWorldTransform =  BoneWorldTransform * InSkeletalMeshComp->GetComponentToWorld();
 			int32 RootIndex = RefSkel.FindBoneIndex(FName("root"));
 			if (RootIndex == INDEX_NONE)
 				return FTransform::Identity;

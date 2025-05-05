@@ -47,7 +47,6 @@ void UTargetSystem::LockOnTarget()
 			Reset();
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("OutHits: %d"), OutHits.Num());
 	for (const FHitResult& Hit: OutHits)
 	{
 		if (!IsValid(Hit.GetActor()))
@@ -143,7 +142,7 @@ void UTargetSystem::Reset()
 	TargetActors.Empty();
 }
 
-void UTargetSystem::ApproachToTarget(float RequiredDistanceToFaceTarget, float RequiredDistanceToMoveToTarget, bool bSwitchToNearestEnemy, float InterpSpeed, bool bMoveToTarget)
+void UTargetSystem::ApproachToTarget(float RequiredDistanceToFaceTarget, float RequiredDistanceToMoveToTarget, bool bSwitchToNearestEnemy, float ApproachTargetOffset, float InterpSpeed, bool bMoveToTarget)
 {
 	AActor* Owner = GetOwner();
 	if (!IsValid(Owner) || !bIsTarget || !IsValid(TargetActor))

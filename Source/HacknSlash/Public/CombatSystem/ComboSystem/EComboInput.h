@@ -7,5 +7,6 @@ enum class EComboInput : uint8
 {
 	None UMETA(DisplayName = "None"),
 	LightAttack UMETA(DisplayName = "LightAttack"),
-	HeavyAttack UMETA(DisplayName = "HeavyAttack")
+	HeavyAttack UMETA(DisplayName = "HeavyAttack"),
+	AirLaunch UMETA(DisplayName = "AirLaunch")
 };

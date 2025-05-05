@@ -96,7 +96,7 @@ UAnimMontage* UHitReactionComponent::GetHitMontage()
 	if (!IsValid(DamageCauserHR))
 		return nullptr;
 
-	if (bIsAirLaunchAttack)
+	if (DamageCauserHR->bIsAirLaunchAttack)
 		return AirLaunchReactionMontage;
 
 	AActor* Owner = GetOwner();
@@ -125,8 +125,10 @@ void UHitReactionComponent::HitFeedBackAnim(UAnimMontage* Montage, const AActor*
 		
 	UAnimInstance* AnimInstance = SkeletalMesh->GetAnimInstance();
 	if (IsValid(AnimInstance))
+	{
+		bIsHit = true;
 		AnimInstance->Montage_Play(Montage);
-	UE_LOG(LogTemp, Warning, TEXT("Montage: %s"), *Montage->GetName());	
+	}
 }
 
 void UHitReactionComponent::HitFeedBackFX()
@@ -152,6 +154,19 @@ void UHitReactionComponent::PushBack(const float InPushBackDistance)
 	{
 		return;
 	}
+
+    ACharacter* OwnerCharacter = Cast<ACharacter>(Owner);
+    if (OwnerCharacter && OwnerCharacter->GetCharacterMovement()->IsFalling())
+    {
+    	UE_LOG(LogTemp, Log, TEXT("Pushback Air"));
+    	FVector Direction = OwnerCharacter->GetActorLocation() - DamageCauser->GetActorLocation();
+    	Direction.Z = 0.0f;
+    	Direction.Normalize();
+    	FVector PushForce = Direction * InPushBackDistance;
+    	PushForce.Z = -10000.0f;
+        OwnerCharacter->LaunchCharacter(PushForce, true, true);
+        return;
+    }
 
 	// Push Location
 	const FVector OwnerLocation = Owner->GetActorLocation();
@@ -279,4 +294,9 @@ void UHitReactionComponent::LaunchCharacter(float LaunchVelocityZ)
 	UE_LOG(LogTemp, Log, TEXT("OK"));
 
 	Owner->LaunchCharacter(FVector(0.0f, 0.0f, LaunchVelocityZ), true, true);
+}
+
+void UHitReactionComponent::SetIsHit(bool IsHit)
+{
+	bIsHit = IsHit;
 }

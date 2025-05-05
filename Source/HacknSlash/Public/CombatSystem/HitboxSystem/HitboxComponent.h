@@ -18,7 +18,7 @@ public:
 	// IHitBoxInterface implementation
 	virtual void InitMesh_Implementation(UPrimitiveComponent* InMesh) override;
 	virtual void BeginAttackTrace_Implementation() override;
-	virtual void UpdateMeleeAttackTrace_Implementation(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, float DeltaTime) override;
+	virtual void UpdateMeleeAttackTrace_Implementation(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, FVector InTraceOffset, float DeltaTime) override;
 	virtual void EndAttackTrace_Implementation() override;
 
 protected:
@@ -62,7 +62,7 @@ private:
 
 	FTransform HandRTransform = FTransform::Identity;
 	float AccumulatedTime = 0.0f;
-	float FixedTimeStep  = 1 / 120.0f;
+	float FixedTimeStep  = 1.0f / 120.0f;
 	UPROPERTY() UAnimMontage* CurrentMontage = nullptr;
 	float MontageTime = 0.0f;
 

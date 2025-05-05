@@ -24,7 +24,7 @@ public:
 	void BeginAttackTrace();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void UpdateMeleeAttackTrace(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, float DeltaTime);
+	void UpdateMeleeAttackTrace(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamageSockets, float InTraceSize, FVector InTraceOffset, float DeltaTime);
 	
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void EndAttackTrace();

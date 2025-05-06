@@ -15,3 +15,6 @@ For continued updates and feature improvements, please refer to the **_update_**
   The actively developed branch where the project continues to evolve.  
   Check this branch for the most recent progress.
 
+## ⚙️ Installation
+1. Clone the repository
+2. Open `.uproject` with Unreal Engine 5.5

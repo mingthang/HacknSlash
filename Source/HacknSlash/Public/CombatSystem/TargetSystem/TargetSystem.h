@@ -25,6 +25,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NextNearestTarget();
 	
+	UFUNCTION(BlueprintCallable)
 	void Reset();
 
 	UFUNCTION(BlueprintCallable)
@@ -37,9 +38,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetLockedOnTarget(AActor* LockedOnTarget);
 
+	// DEBUG
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug")
+	bool bDebugMode = false;
+
 protected:
 	bool FindTargetsInRadius(const float RadiusToFind, const TArray<AActor*>& ActorsToIgnore, ECollisionChannel ObjectTypeQuery, TArray<FHitResult>& OutHits);
 	void GetNearestTarget();
+	void TrackTarget();
 	
 private:
 	UPROPERTY() AActor* TargetActor = nullptr;
@@ -49,7 +55,11 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = TargetSystem, meta = (AllowPrivateAccess = "true"))
 	float FindTargetRadius = 500.0f;
 
-	UPROPERTY() AActor* LockedOnTarget;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = TargetSystem, meta = (AllowPrivateAccess = "true"))
+	float MaxTargetDistance = 1200.0f;
+	
+	UPROPERTY()
+	AActor* LockedOnTarget;
 
 	FRotator LookAtTargetRotation = FRotator::ZeroRotator;
 	

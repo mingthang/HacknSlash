@@ -88,7 +88,7 @@ bool UTargetSystem::FindTargetsInRadius(const float RadiusToFind, const TArray<A
 		ObjectTypes, 
 		false,
 		ActorsToIgnore,
-		EDrawDebugTrace::ForDuration,
+		EDrawDebugTrace::None,
 		OutHits,
 		true
 		);
@@ -140,7 +140,7 @@ void UTargetSystem::GetNearestTarget()
 
 	TargetActor = NewTargetActor;
 
-	if (IsValid(TargetActor))
+	if (!IsValid(TargetActor))
 		return;
 
 	if (TargetActor->Implements<UTargetSystemInterface>())
@@ -152,11 +152,18 @@ void UTargetSystem::GetNearestTarget()
 		}
 	}
 
-	// TODO: Tracking on target 
-	if (IsValid(TargetActor))
-	{
-		LookAtTargetRotation = UKismetMathLibrary::FindLookAtRotation(OwnerLocation, TargetActor->GetActorLocation());
-	}
+	// Tracking on Target
+	FTimerHandle TimerHandle;
+    if (!GetWorld()->GetTimerManager().IsTimerActive(TimerHandle))
+    {
+        GetWorld()->GetTimerManager().SetTimer(
+            TimerHandle,
+            this,
+			&UTargetSystem::TrackTarget,
+            0.01f,
+            true
+        );
+    }	
 }
 
 void UTargetSystem::NextNearestTarget()
@@ -276,4 +283,33 @@ void UTargetSystem::SetLockedOnTarget(AActor* InLockedOnTarget)
 	LockedOnTarget = InLockedOnTarget;
 }
 
+void UTargetSystem::TrackTarget()
+{
+	if (!bIsTarget)
+		return;
 
+	if (!IsValid(TargetActor))
+		return;
+
+	UHitReactionComponent* HitReaction = TargetActor->FindComponentByClass<UHitReactionComponent>();
+	if (HitReaction->IsAlive())
+	{
+		AActor* Owner = GetOwner();
+		if (!IsValid(Owner))
+			return;
+		float DistanceToTarget = Owner->GetDistanceTo(TargetActor);
+		if (DistanceToTarget <= MaxTargetDistance)
+		{
+			// TODO: Look At Target Modes
+		}
+		else
+		{
+			// If target is too far, reset target
+			Reset();
+		}
+	}
+	else
+	{
+		NextNearestTarget();
+	}
+}

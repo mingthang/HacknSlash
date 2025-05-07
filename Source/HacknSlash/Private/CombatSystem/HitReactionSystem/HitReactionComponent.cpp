@@ -1,11 +1,9 @@
 #include "CombatSystem/HitReactionSystem/HitReactionComponent.h"
 
-#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "NiagaraSystem.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 

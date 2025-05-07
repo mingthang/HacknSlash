@@ -33,6 +33,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetMontageTime(float InMontageTime);
+	
+	// DEBUG
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Debug")
+	bool bDebugMode = false;
 
 protected:
     void HandleUpdateMeleeAttackTrace(EWeaponState InWeaponState, ETraceType InTraceType, const TArray<FName>& InDamagePoints, float InTraceSize);
@@ -66,7 +70,4 @@ private:
 	UPROPERTY() UAnimMontage* CurrentMontage = nullptr;
 	float MontageTime = 0.0f;
 
-	// DEBUG
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Hitbox", meta=(AllowPrivateAccess=true))
-	bool bDebugMode = false;
 };
